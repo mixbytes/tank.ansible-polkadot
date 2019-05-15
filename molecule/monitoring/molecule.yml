@@ -1,0 +1,64 @@
+---
+dependency:
+  name: galaxy
+  options:
+    ignore-certs: true
+    ignore-errors: true
+    role-file: requirements.yml
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+lint:
+  name: yamllint
+platforms:
+  - name: ubuntu1804-boot
+    box: ubuntu/bionic64
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+    cpus: 2
+    memory: 1024
+    provider_raw_config_args:
+      - "customize ['modifyvm', :id, '--cpuexecutioncap', '50']"
+  - name: ubuntu1804-prod
+    box: ubuntu/bionic64
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+    cpus: 2
+    memory: 1024
+    provider_raw_config_args:
+      - "customize ['modifyvm', :id, '--cpuexecutioncap', '50']"
+  - name: ubuntu1804-monitoring
+    box: ubuntu/bionic64
+    instance_raw_config_args:
+      - "vm.network 'forwarded_port', guest: 3000, host: 3009"
+      - "vm.network 'forwarded_port', guest: 9090, host: 9099"
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+    cpus: 1
+    provider_raw_config_args:
+      - "customize ['modifyvm', :id, '--cpuexecutioncap', '50']"
+provisioner:
+  name: ansible
+  playbooks:
+    converge: playbook.yml
+  config_options:
+    defaults:
+      callback_whitelist: profile_tasks
+    ssh_connection:
+      pipelining: true
+      ssh_args: -o ControlPersist=6000s -o ControlMaster=auto -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
+  lint:
+    name: ansible-lint
+scenario:
+  name: monitoring
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

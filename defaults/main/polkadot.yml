@@ -1,0 +1,11 @@
+---
+# polkadot.yml
+
+bc_polkadot_comp_state_boot: absent
+bc_polkadot_comp_state_prod: absent
+bc_polkadot_comp_state_monitoring: absent
+bc_polkadot_comp_state_bench: absent
+
+bc_polkadot_image: "mixbytes/polkadot:eenae-bench-0.4"
+
+bc_polkadot_node_metrics_port: 8889

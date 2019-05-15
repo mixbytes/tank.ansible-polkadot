@@ -1,0 +1,33 @@
+---
+# tasks file for ansible-polkadot
+
+- name: "Install required packages"
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - ntp
+
+- name: Login to docker registry
+  include_tasks: "init.yml"
+
+- name: Show debug variables
+  include_tasks: "debug/show-state.yml"
+  tags:
+    - never
+    - debug
+
+- name: Set host parameters for debugging services
+  include_tasks: "docker/debugging.yml"
+
+- name: Login to docker registry
+  include_tasks: "docker/registry.yml"
+
+- name: "Setup docker network"
+  include_tasks: "docker/network.yml"
+
+- name: "Install blockchain components"
+  include_tasks: "blockchain/main.yml"
+  tags:
+    - prod
+    - resume

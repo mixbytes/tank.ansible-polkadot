@@ -1,0 +1,25 @@
+---
+- name: "Create dirs"
+  file:
+    path: "{{ dir }}"
+    state: directory
+  with_items:
+    - "{{ bc_path_general }}/bench"
+    - "{{ bc_path_general }}/bench/config"
+  loop_control:
+    loop_var: dir
+
+- name: "Create config"
+  template:
+    src: "configs/bench/bench.config.json.j2"
+    dest: "{{ bc_path_general }}/bench/config/bench.config.json"
+
+- name: "Install bench"
+  template:
+    src: scripts/bin/bench.j2
+    dest: /usr/bin/bench
+    mode: 0755
+
+- name: "Pull docker container"
+  docker_image:
+    name: mixbytes/tank.bench-polkadot

@@ -1,0 +1,4 @@
+---
+- name: Create docker network on host
+  docker_network:
+    name: "{{ bc_name }}-net"

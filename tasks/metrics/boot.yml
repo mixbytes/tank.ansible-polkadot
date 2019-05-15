@@ -1,0 +1,10 @@
+---
+- name: "Setup promstack at {{ inventory_hostname }}"
+  include_role:
+    name: mixbytes.promstack
+  vars:
+    install_prometheus: false
+    install_grafana: false
+    install_gateway: false
+    grafana_admin_user: "{{ admin_user }}"
+    grafana_admin_password: "{{ admin_password }}"

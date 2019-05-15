@@ -1,0 +1,11 @@
+---
+- block:
+    - name: Ubuntu | check if apport is present
+      stat: path=/etc/default/apport
+      register: defapport
+      when: ansible_distribution == 'Ubuntu'
+    - name: Ubuntu | ensure Apport crash report is disabled
+      replace: dest=/etc/default/apport regexp='^enabled=.*$' replace='enabled=0'
+      when: ansible_distribution == 'Ubuntu' and defapport.stat.exists
+    - name: set sensible core pattern
+      sysctl: name="kernel.core_pattern" value="/tmp/cores/core.%e.%p.%h.%t" sysctl_set=yes state=present reload=yes

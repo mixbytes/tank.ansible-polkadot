@@ -1,0 +1,34 @@
+---
+
+- name: "Make directory structure"
+  tags:
+    - prod
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ bc_path_config }}"
+    - "{{ bc_path_state }}"
+
+
+- name: "Start {{ bc_name }}-{{ bc_component_name }} container"
+  register: "{{ bc_name }}_{{ bc_component_name }}"
+  docker_container:
+    name: "{{ bc_name }}-{{ bc_component_name }}"
+    image: "{{ bc_polkadot_image }}"
+    command: /usr/local/bin/polkadot --chain=local --validator --key Bob -d /state
+    hostname: "{{ bc_name }}-{{ bc_component_name }}"
+    network_mode: host
+    volumes:
+      - "{{ bc_path_state }}:/state"
+      - "/tmp/cores:/tmp/cores"
+    stop_timeout: 600
+    pull: true
+
+
+- name: List data about prod container
+  debug:
+    var="{{ bc_name }}_{{ bc_component_name }}"
+  tags:
+    - never
+    - debug

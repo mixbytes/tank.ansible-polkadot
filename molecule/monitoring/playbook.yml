@@ -1,0 +1,33 @@
+---
+
+- name: Converge boot node
+  hosts: "*boot*"
+  become: true
+  vars:
+    bc_polkadot_comp_state_boot: present
+    bc_polkadot_comp_state_bench: present
+    install_promstack: true
+  roles:
+    - role: tank.ansible-polkadot
+
+- name: Converge validator node
+  hosts: "*prod*"
+  become: true
+  vars:
+    bc_polkadot_comp_state_prod: present
+    bc_polkadot_comp_state_bench: present
+    install_promstack: true
+    bc_polkadot_node_id: "{{ play_hosts.index(inventory_hostname) | int }}"
+  roles:
+    - role: tank.ansible-polkadot
+
+- name: Converge monitoring node
+  hosts: "*monitoring*"
+  become: true
+  vars:
+    bc_polkadot_comp_state_monitoring: present
+    install_promstack: true
+    admin_user: tank
+    admin_password: tank
+  roles:
+    - role: tank.ansible-polkadot

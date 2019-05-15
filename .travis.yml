@@ -1,0 +1,14 @@
+---
+sudo: required
+language: python
+before_install:
+  - sudo apt-get -qq update
+install:
+  - pip install molecule
+script:
+  - molecule lint
+notifications:
+  webhooks:
+    urls:
+      - https://galaxy.ansible.com/api/v1/notifications/?branch=master
+    on_failure: never

@@ -1,0 +1,84 @@
+---
+- name: "Collect facts about all targets"
+  tags:
+    - debug
+    - network
+  run_once: true
+  setup:
+  delegate_to: "{{ item }}"
+  delegate_facts: true
+  loop: "{{ groups['all'] }}"
+
+- name: "Add boot node to group bcboot"
+  tags:
+    - debug
+    - network
+  delegate_to: "{{ item }}"
+  run_once: true
+  add_host:
+    name: "{{ item }}"
+    groups: bcboot
+  loop: "{{ groups['all'] }}"
+  when: '"boot" in hostvars[item]["ansible_hostname"]'
+  changed_when: false
+
+- name: "List hosts in groups all"
+  tags:
+    - never
+    - debug
+    - network
+  debug:
+    msg: "{{ groups['all'] }}"
+
+- name: "Add all nodes to group bcpeers"
+  tags:
+    - debug
+    - network
+  delegate_to: "{{ item }}"
+  run_once: true
+  add_host:
+    name: "{{ item }}"
+    groups: bcpeers
+  loop: "{{ groups['all'] }}"
+  when: '"prod" in hostvars[item]["ansible_hostname"] or "boot" in hostvars[item]["ansible_hostname"]'
+  changed_when: false
+
+- name: "Add monitoring nodes to group monitoring_peer"
+  tags:
+    - debug
+    - network
+  delegate_to: "{{ item }}"
+  run_once: true
+  register: _create_group_monitoring
+  add_host:
+    name: "{{ item }}"
+    groups: monitoring_peer
+  loop: "{{ groups['all'] }}"
+  when: '"monitoring" in hostvars[item]["ansible_hostname"] or "monitoring" in hostvars[item]["ansible_hostname"]'
+  changed_when: false
+
+- name: "Set monitoring ip address"
+  run_once: true
+  tags:
+    - debug
+    - network
+  set_fact:
+    monitoring_peer_ip: "{{ groups['monitoring_peer'] | map('extract', hostvars, ['ansible_'+bc_private_interface, 'ipv4', 'address']) | list }}"
+  when:
+    - _create_group_monitoring is changed
+
+- name: "Set boot ip address"
+  run_once: true
+  tags:
+    - debug
+    - network
+  set_fact:
+    bc_boot_ip: "{{ groups['bcboot'] | map('extract', hostvars, ['ansible_'+bc_private_interface, 'ipv4', 'address']) | list }}"
+
+- name: "Set all peers ip addresses"
+  run_once: true
+  tags:
+    - debug
+    - network
+  set_fact:
+    bc_peers_ip: "{{ groups['bcpeers'] | map('extract', hostvars, ['ansible_'+bc_private_interface, 'ipv4', 'address']) | list }}"

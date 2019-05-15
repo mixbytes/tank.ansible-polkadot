@@ -1,0 +1,30 @@
+---
+
+- name: "Make directory structure"
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ bc_path_config }}"
+    - "{{ bc_path_state }}"
+
+
+- name: Start boot-node container
+  register: _start_boot_node
+  docker_container:
+    name: "{{ bc_name }}-{{ bc_component_name }}"
+    image: "{{ bc_polkadot_image }}"
+    command: /usr/local/bin/polkadot --chain=local --validator --key Alice -d /state
+    hostname: "{{ bc_name }}-{{ bc_component_name }}"
+    network_mode: host
+    volumes:
+      - "{{ bc_path_state }}:/state"
+      - "/tmp/cores:/tmp/cores"
+    stop_timeout: 600
+    pull: true
+
+- name: "Waiting"
+  pause:
+    seconds: 25
+  when:
+    - _start_boot_node is changed

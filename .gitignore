@@ -1,0 +1,7 @@
+__pycache__
+.idea
+/playbook.yml
+notes
+*.out
+*.sublime-project
+*.sublime-workspace

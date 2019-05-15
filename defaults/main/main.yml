@@ -1,0 +1,15 @@
+---
+# defaults file for ansible-polkadot
+bc_debug: false
+bc_private_interface: enp0s8
+bc_name: polkadot
+
+bc_path_general: "/opt"
+bc_path_config: "{{ bc_path_general }}/{{ bc_name }}/{{ bc_component_name }}/config"
+bc_path_state: "{{ bc_path_general }}/{{ bc_name }}/{{ bc_component_name }}/state"
+
+# option to use a private docker registry
+bc_docker_registry_login: false
+bc_docker_registry_url: "registry.gitlab.com"
+bc_docker_username: "foo"
+bc_docker_password: "bar"

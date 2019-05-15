@@ -1,0 +1,6 @@
+- targets:
+{% for port in target_ports %}
+  - {{ target_ip }}:{{ port }}
+{% endfor %}
+  labels:
+    job: "{{ target_ip }}"

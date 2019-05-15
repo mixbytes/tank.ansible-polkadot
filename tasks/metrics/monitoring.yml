@@ -1,0 +1,124 @@
+---
+- name: "Setup promstack at {{ inventory_hostname }}"
+  include_role:
+    name: mixbytes.promstack
+  vars:
+    install_cadvisor: false
+    install_gateway: false
+    grafana_admin_user: "{{ admin_user }}"
+    grafana_admin_password: "{{ admin_password }}"
+    prometheus_targets: [{ jobname: "node_exporter", host: "localhost", port: "{{ node_exporter_port }}" }]
+
+- name: "Add prometheus targets to {{ inventory_hostname }}"
+  loop: "{{ bc_peers_ip }}"
+  template:
+    src: "configs/prometheus/target.yml.j2"
+    dest: "/etc/prometheus/targets/{{ target_ip }}.yml"
+  vars:
+    - target_ports: ["8080", "9100", "{{ bc_polkadot_node_metrics_port }}"]
+  when: install_promstack
+  loop_control:
+    loop_var: target_ip
+
+- name: Install grafana python api client
+  pip:
+    name: "grafana_api_client"
+
+- name: Check api status and retry until is available
+  uri:
+    url: "http://127.0.0.1:3000/api/admin/settings"
+    method: GET
+    user: "{{ admin_user }}"
+    password: "{{ admin_password }}"
+    force_basic_auth: true
+    status_code: 200
+  register: httpresponse
+  until: httpresponse.status == 200
+  retries: 10
+  delay: 20
+
+- name: Form slug from Title
+  shell: |
+    echo "{{ Title }}" | sed -e "s/ /-/g" | tr '[:upper:]' '[:lower:]'
+  register: slugout
+
+- name: Set slug
+  set_fact:
+    dashboard_slug: "{{ slugout.stdout }}"
+
+- name: Check dashboard exist by file
+  stat:
+    path: "/root/dashboard.json"
+  register: dashboard_exist
+
+- name: Generate UID
+  set_fact:
+    UID: "{{ lookup('password', '/dev/null length=9 chars=ascii_letters') }}"
+
+- name: Get dashboard uid
+  shell: |
+    cat /root/dashboard.json | grep uid | sed -e s/uid//g | tr -d ', ":'
+  register: uid_from_file
+
+- name: Check dashboard exist by slug
+  uri:
+    url: "http://127.0.0.1:3000/api/dashboards/slug/{{ dashboard_slug }}"
+    method: GET
+    user: "{{ admin_user }}"
+    password: "{{ admin_password }}"
+    force_basic_auth: true
+    status_code: [200, 404, 400]
+  register: slughttpresponse
+
+#- name: Copy dashboard
+#  template:
+#    src: "grafana/polkadot/dashboard.json.j2"
+#    dest: "/root/dashboard.json"
+#  register: dashboard
+#  when: slughttpresponse.status == 404
+#
+#- name: Import Grafana dashboard (if not imported)
+#  block:
+#    - name: "Create dashboard"
+#      grafana_dashboard:
+#        grafana_url: "http://localhost:3000"
+#        grafana_user: "{{ admin_user }}"
+#        grafana_password: "{{ admin_password }}"
+#        state: present
+#        message: "Imported"
+#        overwrite: true
+#        path: "/root/dashboard.json"
+#
+#    - name: "Set imported to true"
+#      set_fact:
+#        imported: true
+#  when:
+#    - slughttpresponse.status == 404
+#    - not dashboard_exist.stat.exists
+#    - not imported
+#
+#- name: "Reimport Grafana dashboard (if dashboard file changed)"
+#  block:
+#    - name: Delete existing dashboard
+#      grafana_dashboard:
+#        grafana_url: "http://localhost:3000"
+#        grafana_user: "{{ admin_user }}"
+#        grafana_password: "{{ admin_password }}"
+#        state: absent
+#        uid: "{{ uid_from_file.stdout }}"
+#        message: "Removed"
+#
+#    - name: Import new Grafana dashboard
+#      grafana_dashboard:
+#        grafana_url: "http://localhost:3000"
+#        grafana_user: "{{ admin_user }}"
+#        grafana_password: "{{ admin_password }}"
+#        state: present
+#        message: "Imported"
+#        overwrite: true
+#        path: "/root/dashboard.json"
+#  when:
+#    - dashboard.changed
+#    - slughttpresponse.status == 404
+#    - not imported
+#    - not dashboard_exist.stat.exists

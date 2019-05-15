@@ -1,0 +1,8 @@
+---
+bench_config:
+  blockchain: "Polkadot"
+  rpcUrl: "http://localhost:9944"
+
+  log:
+    logLevel: 3
+    printErrorStack: "true"

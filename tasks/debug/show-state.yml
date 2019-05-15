@@ -1,0 +1,36 @@
+---
+- name: "List target host ip address for {{ inventory_hostname }}"
+  tags:
+    - never
+    - debug
+    - network
+  debug:
+    msg: "{{ hostvars[inventory_hostname]['ansible_'+bc_private_interface]['ipv4']['address'] }}"
+
+- name: "List peers ip addresses for {{ inventory_hostname }}"
+  tags:
+    - never
+    - debug
+    - network
+  loop: "{{ bc_peers_ip }}"
+  debug:
+    msg: "{{ item }}"
+
+- name: "List boot ip address for {{ inventory_hostname }}"
+  tags:
+    - never
+    - debug
+    - network
+  loop: "{{ bc_boot_ip }}"
+  debug:
+    msg: "{{ item }}"
+
+
+- name: "List monitoring ip address for {{ inventory_hostname }}"
+  tags:
+    - never
+    - debug
+    - network
+  loop: "{{ monitoring_peer_ip }}"
+  debug:
+    msg: "{{ item }}"

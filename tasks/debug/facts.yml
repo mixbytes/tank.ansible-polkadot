@@ -1,0 +1,7 @@
+---
+- name: Show local facts
+  debug:
+    msg: "{{ hostvars[inventory_hostname]['ansible_local']['bc_bp_installed'] }}"
+  tags:
+    - never
+    - debug

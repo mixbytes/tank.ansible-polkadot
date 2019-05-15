@@ -1,0 +1,22 @@
+---
+- name: Prepare 1
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install python2 for Ansible
+      raw: bash -c "test -e /usr/bin/python || (apt -qqy update && apt install -qqy python-minimal)"
+      register: output
+      changed_when:
+        - output.stdout != ""
+        - output.stdout != "\r\n"
+    - name: Gathering Facts
+      setup:
+
+- name: Prepare 2
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - role: geerlingguy.docker
+    - role: azavea.ansible-pip
