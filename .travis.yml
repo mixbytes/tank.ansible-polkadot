@@ -6,7 +6,7 @@ before_install:
 install:
   - pip install molecule
 script:
-  - molecule lint
+  - molecule lint -s monitoring
 notifications:
   webhooks:
     urls:
