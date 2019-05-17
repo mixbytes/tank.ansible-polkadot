@@ -14,7 +14,7 @@
   docker_container:
     name: "{{ bc_name }}-{{ bc_component_name }}"
     image: "{{ bc_polkadot_image }}"
-    command: /usr/local/bin/polkadot --chain=local --validator --key Alice -d /state
+    command: /usr/local/bin/polkadot -d /state --chain=bench --validator --key //Alice --ws-external --node-key-type ed25519 --node-key 1111111111111111111111111111111111111111111111111111111111111111
     hostname: "{{ bc_name }}-{{ bc_component_name }}"
     network_mode: host
     volumes:
@@ -22,9 +22,11 @@
       - "/tmp/cores:/tmp/cores"
     stop_timeout: 600
     pull: true
+    env:
+      EXTRA_VALIDATORS: "{{ bc_peers_ip|length - 1 }}"
 
 - name: "Waiting"
   pause:
-    seconds: 25
+    seconds: 15
   when:
     - _start_boot_node is changed

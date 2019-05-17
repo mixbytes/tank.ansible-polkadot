@@ -17,7 +17,7 @@
     bc_polkadot_comp_state_prod: present
     bc_polkadot_comp_state_bench: present
     install_promstack: true
-    bc_polkadot_node_id: "{{ play_hosts.index(inventory_hostname) | int }}"
+    bc_polkadot_extra_validator_id: "{{ play_hosts.index(inventory_hostname) | int }}"
   roles:
     - role: tank.ansible-polkadot
 
