@@ -29,3 +29,30 @@ Author Information
 ------------------
 
 [MixBytes](https://mixbytes.io).
+
+Development
+===========
+
+Dependencies
+------------
+
+Python 2.7+ is required.
+
+```bash
+pip install molecule
+```
+
+Tests
+-----
+
+Quick linter test
+
+```bash
+molecule lint -s monitoring
+```
+
+Vagrant+virtualbox based local test
+
+```bash
+molecule test -s monitoring
+```
