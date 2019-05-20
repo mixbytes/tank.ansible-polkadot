@@ -16,7 +16,10 @@
   docker_container:
     name: "{{ bc_name }}-{{ bc_component_name }}"
     image: "{{ bc_polkadot_image }}"
-    command: /usr/local/bin/polkadot -d /state --chain=bench --validator --key "//v{{ bc_polkadot_extra_validator_id }}" --ws-external --bootnodes "/ip4/{{ bc_boot_ip[0] }}/tcp/30333/p2p/QmXS53cQyDRT7RaXiKYLjfkX8xSc9pBDPohDh1F3HxzjAz"
+    command: |
+      /usr/local/bin/polkadot -d /state
+      --chain=bench --validator --key "//v{{ bc_polkadot_extra_validator_id }}" --ws-external
+      --bootnodes "/ip4/{{ bc_boot_ip[0] }}/tcp/30333/p2p/QmXS53cQyDRT7RaXiKYLjfkX8xSc9pBDPohDh1F3HxzjAz"
     hostname: "{{ bc_name }}-{{ bc_component_name }}"
     network_mode: host
     volumes:

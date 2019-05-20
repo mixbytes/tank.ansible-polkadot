@@ -70,14 +70,14 @@
     status_code: [200, 404, 400]
   register: slughttpresponse
 
-#- name: Copy dashboard
+# - name: Copy dashboard
 #  template:
 #    src: "grafana/polkadot/dashboard.json.j2"
 #    dest: "/root/dashboard.json"
 #  register: dashboard
 #  when: slughttpresponse.status == 404
 #
-#- name: Import Grafana dashboard (if not imported)
+# - name: Import Grafana dashboard (if not imported)
 #  block:
 #    - name: "Create dashboard"
 #      grafana_dashboard:
@@ -97,7 +97,7 @@
 #    - not dashboard_exist.stat.exists
 #    - not imported
 #
-#- name: "Reimport Grafana dashboard (if dashboard file changed)"
+# - name: "Reimport Grafana dashboard (if dashboard file changed)"
 #  block:
 #    - name: Delete existing dashboard
 #      grafana_dashboard:
