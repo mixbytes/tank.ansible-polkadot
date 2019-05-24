@@ -16,7 +16,7 @@
     image: "{{ bc_polkadot_image }}"
     command: |
       /usr/local/bin/polkadot -d /state
-      --chain=bench --validator --key //Alice --ws-external
+      --chain=bench --validator --key //Alice --ws-external --rpc-external
       --node-key-type ed25519 --node-key 1111111111111111111111111111111111111111111111111111111111111111
     hostname: "{{ bc_name }}-{{ bc_component_name }}"
     network_mode: host
@@ -27,6 +27,18 @@
     pull: true
     env:
       EXTRA_VALIDATORS: "{{ bc_peers_ip|length - 1 }}"
+
+
+- name: Start boot-node metric exporter container
+  docker_container:
+    name: "{{ bc_name }}-{{ bc_component_name }}-metrics"
+    image: "{{ bc_polkadot_exporter_image }}"
+    command: --exporter_port "{{ bc_polkadot_node_metrics_port }}"
+    hostname: "{{ bc_name }}-{{ bc_component_name }}-metrics"
+    network_mode: host
+    stop_timeout: 600
+    pull: true
+
 
 - name: "Waiting"
   pause:

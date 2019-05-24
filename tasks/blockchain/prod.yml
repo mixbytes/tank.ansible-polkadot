@@ -18,7 +18,7 @@
     image: "{{ bc_polkadot_image }}"
     command: |
       /usr/local/bin/polkadot -d /state
-      --chain=bench --validator --key "//v{{ bc_polkadot_extra_validator_id }}" --ws-external
+      --chain=bench --validator --key "//v{{ bc_polkadot_extra_validator_id }}" --ws-external --rpc-external
       --bootnodes "/ip4/{{ bc_boot_ip[0] }}/tcp/30333/p2p/QmXS53cQyDRT7RaXiKYLjfkX8xSc9pBDPohDh1F3HxzjAz"
     hostname: "{{ bc_name }}-{{ bc_component_name }}"
     network_mode: host
@@ -29,6 +29,17 @@
     pull: true
     env:
       EXTRA_VALIDATORS: "{{ bc_peers_ip|length - 1 }}"
+
+
+- name: "Start {{ bc_name }}-{{ bc_component_name }}-metrics container"
+  docker_container:
+    name: "{{ bc_name }}-{{ bc_component_name }}-metrics"
+    image: "{{ bc_polkadot_exporter_image }}"
+    command: --exporter_port "{{ bc_polkadot_node_metrics_port }}"
+    hostname: "{{ bc_name }}-{{ bc_component_name }}-metrics"
+    network_mode: host
+    stop_timeout: 600
+    pull: true
 
 
 - name: List data about prod container
