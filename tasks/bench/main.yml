@@ -9,10 +9,15 @@
   loop_control:
     loop_var: dir
 
-- name: "Create config"
+- name: "Create common config"
   template:
     src: "configs/bench/bench.config.json.j2"
     dest: "{{ bc_path_general }}/bench/config/bench.config.json"
+
+- name: "Create config for polkadot"
+  template:
+    src: "configs/bench/polkadot.bench.config.json.j2"
+    dest: "{{ bc_path_general }}/bench/config/polkadot.bench.config.json"
 
 - name: "Install bench"
   template:

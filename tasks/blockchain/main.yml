@@ -42,6 +42,18 @@
     - bc_polkadot_comp_state_prod == "present"
 
 
+- name: "Processing bench component"
+  block:
+    - set_fact:
+        bc_component_name: "bench"
+
+    - name: "Setup bench-polkadot"
+      include_tasks: "bench/main.yml"
+
+  when:
+    - bc_polkadot_comp_state_bench == "present"
+
+
 - name: "Processing monitoring component"
   block:
     - set_fact:

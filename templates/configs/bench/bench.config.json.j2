@@ -1,0 +1,13 @@
+{
+
+  "log": {
+    "logLevel": "{{ bench_config.log.logLevel }}",
+    "keyPoints": "{{ bench_config.log.keyPoints }}"
+  },
+  "stopOn": {
+    "error": "{{ bench_config.stopOn.error }}",
+    "processedTransactions": {{ bench_config.stopOn.processedTransactions }}
+  },
+  "threadsAmount": {{ bench_config.threadsAmount }},
+  "maxActivePromises": {{ bench_config.maxActivePromises }}
+}

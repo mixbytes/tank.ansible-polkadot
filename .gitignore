@@ -5,3 +5,4 @@ notes
 *.out
 *.sublime-project
 *.sublime-workspace
+env
