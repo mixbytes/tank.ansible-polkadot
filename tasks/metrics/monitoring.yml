@@ -70,55 +70,55 @@
     status_code: [200, 404, 400]
   register: slughttpresponse
 
-# - name: Copy dashboard
-#  template:
-#    src: "grafana/polkadot/dashboard.json.j2"
-#    dest: "/root/dashboard.json"
-#  register: dashboard
-#  when: slughttpresponse.status == 404
-#
-# - name: Import Grafana dashboard (if not imported)
-#  block:
-#    - name: "Create dashboard"
-#      grafana_dashboard:
-#        grafana_url: "http://localhost:3000"
-#        grafana_user: "{{ admin_user }}"
-#        grafana_password: "{{ admin_password }}"
-#        state: present
-#        message: "Imported"
-#        overwrite: true
-#        path: "/root/dashboard.json"
-#
-#    - name: "Set imported to true"
-#      set_fact:
-#        imported: true
-#  when:
-#    - slughttpresponse.status == 404
-#    - not dashboard_exist.stat.exists
-#    - not imported
-#
-# - name: "Reimport Grafana dashboard (if dashboard file changed)"
-#  block:
-#    - name: Delete existing dashboard
-#      grafana_dashboard:
-#        grafana_url: "http://localhost:3000"
-#        grafana_user: "{{ admin_user }}"
-#        grafana_password: "{{ admin_password }}"
-#        state: absent
-#        uid: "{{ uid_from_file.stdout }}"
-#        message: "Removed"
-#
-#    - name: Import new Grafana dashboard
-#      grafana_dashboard:
-#        grafana_url: "http://localhost:3000"
-#        grafana_user: "{{ admin_user }}"
-#        grafana_password: "{{ admin_password }}"
-#        state: present
-#        message: "Imported"
-#        overwrite: true
-#        path: "/root/dashboard.json"
-#  when:
-#    - dashboard.changed
-#    - slughttpresponse.status == 404
-#    - not imported
-#    - not dashboard_exist.stat.exists
+- name: Copy dashboard
+  template:
+    src: "grafana/dashboard.json.j2"
+    dest: "/root/dashboard.json"
+  register: dashboard
+  when: slughttpresponse.status == 404
+
+- name: Import Grafana dashboard (if not imported)
+  block:
+    - name: "Create dashboard"
+      grafana_dashboard:
+        grafana_url: "http://localhost:3000"
+        grafana_user: "{{ admin_user }}"
+        grafana_password: "{{ admin_password }}"
+        state: present
+        message: "Imported"
+        overwrite: true
+        path: "/root/dashboard.json"
+
+    - name: "Set imported to true"
+      set_fact:
+        imported: true
+  when:
+    - slughttpresponse.status == 404
+    - not dashboard_exist.stat.exists
+    - not imported
+
+- name: "Reimport Grafana dashboard (if dashboard file changed)"
+  block:
+    - name: Delete existing dashboard
+      grafana_dashboard:
+        grafana_url: "http://localhost:3000"
+        grafana_user: "{{ admin_user }}"
+        grafana_password: "{{ admin_password }}"
+        state: absent
+        uid: "{{ uid_from_file.stdout }}"
+        message: "Removed"
+
+    - name: Import new Grafana dashboard
+      grafana_dashboard:
+        grafana_url: "http://localhost:3000"
+        grafana_user: "{{ admin_user }}"
+        grafana_password: "{{ admin_password }}"
+        state: present
+        message: "Imported"
+        overwrite: true
+        path: "/root/dashboard.json"
+  when:
+    - dashboard.changed
+    - slughttpresponse.status == 404
+    - not imported
+    - not dashboard_exist.stat.exists
