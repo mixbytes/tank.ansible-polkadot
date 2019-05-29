@@ -48,7 +48,7 @@
 
 - name: Check dashboard exist by file
   stat:
-    path: "/root/dashboard.json"
+    path: "{{ grafana_dashboard_tmp_file }}"
   register: dashboard_exist
 
 - name: Generate UID
@@ -57,7 +57,7 @@
 
 - name: Get dashboard uid
   shell: |
-    cat /root/dashboard.json | grep uid | sed -e s/uid//g | tr -d ', ":'
+    cat "{{ grafana_dashboard_tmp_file }}" | grep uid | sed -e s/uid//g | tr -d ', ":'
   register: uid_from_file
 
 - name: Check dashboard exist by slug
@@ -71,31 +71,33 @@
   register: slughttpresponse
 
 - name: Copy dashboard
+  become: false
   template:
     src: "grafana/dashboard.json.j2"
-    dest: "/root/dashboard.json"
+    dest: "{{ grafana_dashboard_tmp_file }}"
   register: dashboard
   when: slughttpresponse.status == 404
 
 - name: Import Grafana dashboard (if not imported)
   block:
     - name: "Create dashboard"
+      become: false
       grafana_dashboard:
         grafana_url: "http://localhost:3000"
         grafana_user: "{{ admin_user }}"
         grafana_password: "{{ admin_password }}"
         state: present
-        message: "Imported"
-        overwrite: true
-        path: "/root/dashboard.json"
+        commit_message: Imported
+        overwrite: yes
+        path: "{{ grafana_dashboard_tmp_file }}"
 
     - name: "Set imported to true"
       set_fact:
         imported: true
   when:
-    - slughttpresponse.status == 404
-    - not dashboard_exist.stat.exists
+    - slughttpresponse.status != 412
     - not imported
+    - not dashboard_exist.stat.exists
 
 - name: "Reimport Grafana dashboard (if dashboard file changed)"
   block:
@@ -106,7 +108,7 @@
         grafana_password: "{{ admin_password }}"
         state: absent
         uid: "{{ uid_from_file.stdout }}"
-        message: "Removed"
+        commit_message: "Removed"
 
     - name: Import new Grafana dashboard
       grafana_dashboard:
@@ -114,9 +116,9 @@
         grafana_user: "{{ admin_user }}"
         grafana_password: "{{ admin_password }}"
         state: present
-        message: "Imported"
+        commit_message: "Imported"
         overwrite: true
-        path: "/root/dashboard.json"
+        path: "{{ grafana_dashboard_tmp_file }}"
   when:
     - dashboard.changed
     - slughttpresponse.status == 404

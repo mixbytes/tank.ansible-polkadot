@@ -1,2 +1,3 @@
 ---
 # vars file for ansible-polkadot
+grafana_dashboard_tmp_file: "/tmp/dashboard.json"
