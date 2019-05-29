@@ -7,7 +7,7 @@ bench_config:
 
   stopOn:
     error: "print"
-    processedTransactions: 200
+    processedTransactions: 10000
 
   threadsAmount: 2
   maxActivePromises: 1
