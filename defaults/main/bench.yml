@@ -7,10 +7,10 @@ bench_config:
 
   stopOn:
     error: "print"
-    processedTransactions: 10000
+    processedTransactions: 1000
 
-  threadsAmount: 2
-  maxActivePromises: 1
+  threadsAmount: 1
+  maxActivePromises: 10
 
 bench_config_polkadot:
   wsUrl: "ws://127.0.0.1:9944"
