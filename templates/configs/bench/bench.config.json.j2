@@ -1,13 +1,21 @@
 {
+  "tps": 5,
 
-  "log": {
-    "logLevel": "{{ bench_config.log.logLevel }}",
-    "keyPoints": "{{ bench_config.log.keyPoints }}"
-  },
+  "logLevel": {{ bench_config.logLevel }},
   "stopOn": {
     "error": "{{ bench_config.stopOn.error }}",
     "processedTransactions": {{ bench_config.stopOn.processedTransactions }}
   },
   "threadsAmount": {{ bench_config.threadsAmount }},
-  "maxActivePromises": {{ bench_config.maxActivePromises }}
+  "maxActivePromises": {{ bench_config.maxActivePromises }},
+
+  "prometheusTelemetry": {
+    "enable": false,
+
+    "url": "",
+    "user": "",
+    "password": "",
+    "respCodeBuckets": [],
+    "trxsDurationBuckets": []
+  }
 }

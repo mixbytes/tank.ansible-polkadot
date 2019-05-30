@@ -1,9 +1,7 @@
 ---
 bench_config:
 
-  log:
-    logLevel: 3
-    keyPoints: 1
+  logLevel: 3
 
   stopOn:
     error: "print"
