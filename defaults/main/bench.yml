@@ -8,7 +8,10 @@ bench_config:
     processedTransactions: 1000
 
   threadsAmount: 1
-  maxActivePromises: 10
+
+  # looks like the client waits for transactions to be mined,
+  # so this number should be high enough
+  maxActivePromises: 100
 
 bench_config_polkadot:
   wsUrl: "ws://127.0.0.1:9944"
