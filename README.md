@@ -38,8 +38,10 @@ Dependencies
 
 Python 2.7+ is required.
 
+For local tests Vagrant and VirtualBox are required.
+
 ```bash
-pip install molecule
+pip install molecule python-vagrant
 ```
 
 Tests
