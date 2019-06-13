@@ -12,6 +12,7 @@ bench_config:
   # looks like the client waits for transactions to be mined,
   # so this number should be high enough
   maxActivePromises: 100
+  telemetryStepInterval: 60000
 
 bench_config_polkadot:
   wsUrl: "ws://127.0.0.1:9944"
