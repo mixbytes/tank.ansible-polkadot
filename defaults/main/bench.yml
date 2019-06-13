@@ -7,11 +7,11 @@ bench_config:
     error: "print"
     processedTransactions: 1000
 
-  threadsAmount: 1
+  threadsAmount: 4
 
   # looks like the client waits for transactions to be mined,
   # so this number should be high enough
-  maxActivePromises: 100
+  maxActivePromises: 1
   telemetryStepInterval: 60000
 
 bench_config_polkadot:
