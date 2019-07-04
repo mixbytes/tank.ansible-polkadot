@@ -1,14 +1,4 @@
 ---
-- name: "Collect facts about all targets"
-  tags:
-    - debug
-    - network
-  run_once: true
-  setup:
-  delegate_to: "{{ item }}"
-  delegate_facts: true
-  loop: "{{ groups['all'] }}"
-
 - name: "Add boot node to group bcboot"
   tags:
     - debug
