@@ -1,0 +1,12 @@
+---
+- name: Send the load profile to the nodes
+  hosts: "*boot*,*producer*"
+  become: true
+  roles:
+    - role: tank.blockchain
+  tasks:
+    - name: "Send the load profile {{ load_profile_local_file }} to the nodes"
+      tags: [send_load_profile]
+      copy:
+        src: "{{ load_profile_local_file }}"
+        dest: "{{ load_profile_remote_file }}"
