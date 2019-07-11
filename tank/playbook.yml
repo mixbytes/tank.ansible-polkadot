@@ -33,3 +33,5 @@
         msg: "{{ bc_polkadot_extra_validator_id }}"
     - debug: msg="Validator instance(s) ready"
       tags: [print_action]
+    - set_fact:
+        bench_present: True
