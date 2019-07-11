@@ -1,6 +1,6 @@
 ---
 - name: Send the load profile to the nodes
-  hosts: "*boot*,*producer*"
+  hosts: "*producer*"
   become: true
   roles:
     - role: tank.blockchain
