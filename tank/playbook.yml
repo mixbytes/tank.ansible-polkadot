@@ -34,4 +34,4 @@
     - debug: msg="Validator instance(s) ready"
       tags: [print_action]
     - set_fact:
-        bench_present: True
+        bench_present: true
