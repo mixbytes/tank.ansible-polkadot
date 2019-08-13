@@ -124,3 +124,18 @@
     - slughttpresponse.status == 404
     - not imported
     - not dashboard_exist.stat.exists
+
+- name: "dev-286"
+  uri:
+    url: "http://127.0.0.1:3000/api/user/stars/dashboard/1"
+    method: POST
+    user: "{{ admin_user }}"
+    password: "{{ admin_password }}"
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+    force_basic_auth: true
+    register: resres
+- debug:
+    var: resres
