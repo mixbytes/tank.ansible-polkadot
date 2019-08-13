@@ -133,7 +133,3 @@
     password: "{{ admin_password }}"
     force_basic_auth: true
     status_code: 200
-    headers:
-      Cookies: "{{ login.set_cookie }}"
-- debug:
-    var: login.set_cookie
