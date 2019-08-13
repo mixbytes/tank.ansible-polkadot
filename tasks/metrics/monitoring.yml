@@ -125,14 +125,23 @@
     - not imported
     - not dashboard_exist.stat.exists
 
-- name: "dev-286"
+- name: "Log in getting session ID"
   uri:
-    url: "http://127.0.0.1:3000/api/user/stars/dashboard/1"
+    url: "http://127.0.0.1:3000/api/org"
+    method: GET
+    user: "{{ admin_user }}"
+    password: "{{ admin_password }}"
+    force_basic_auth: true
+    status_code: 200
+  register: login
+
+- name: "Star dashboard"
+  uri:
+    url: "http://127.0.0.1:3000/api/users/dashboard/1"
     method: POST
     user: "{{ admin_user }}"
     password: "{{ admin_password }}"
-    headers:
-      Content-Type: "application/json"
-      Accept: "application/json"
     force_basic_auth: true
-    status_code: [200, 404, 400]
+    status_code: 200
+    headers:
+      Cookies: "{{ login.set_cookie }}"
