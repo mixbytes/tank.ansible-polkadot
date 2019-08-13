@@ -136,6 +136,4 @@
       Content-Type: "application/json"
       Accept: "application/json"
     force_basic_auth: true
-    register: resres
-- debug:
-    var: resres
+    status_code: [200, 404, 400]
