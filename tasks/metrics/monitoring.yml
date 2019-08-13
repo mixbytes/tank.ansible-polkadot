@@ -134,6 +134,8 @@
     force_basic_auth: true
     status_code: 200
   register: login
+- debug:
+    var: login
 
 - name: "Star dashboard"
   uri:
@@ -145,3 +147,6 @@
     status_code: 200
     headers:
       Cookies: "{{ login.set_cookie }}"
+- debug:
+    var: login.set_cookie
+    
