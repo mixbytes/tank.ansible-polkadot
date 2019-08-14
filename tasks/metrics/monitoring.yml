@@ -127,6 +127,9 @@
 
 - name: Star dashboard
   uri:
-    url: "http://{{ admin_user }}:{ admin_password }}@127.0.0.1:3000/api/user/stars/dashboard/1"
+    url: "http://127.0.0.1:3000/api/user/stars/dashboard/1"
     method: POST
+    user: "{{ admin_user }}"
+    password: "{{ admin_password }}"
+    force_basic_auth: true
     status_code: 200
