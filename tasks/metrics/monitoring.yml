@@ -138,10 +138,6 @@
     status_code: 200
   register: preferences
 
-- debug:
-    var: preferences.json.homeDashboardId
-
-
 - name: Star dashboard
   uri:
     url: "http://127.0.0.1:3000/api/user/stars/dashboard/1"
@@ -150,6 +146,8 @@
     password: "{{ admin_password }}"
     force_basic_auth: true
     status_code: 200
+  when:
+    - preferences.json.homeDashboardId == 0
 
 - name: Set default dashboard
   uri:
@@ -164,3 +162,5 @@
     headers:
       Content-Type: "application/json"
       Accepts: "application/json"
+  when:
+    - preferences.json.homeDashboardId == 0
