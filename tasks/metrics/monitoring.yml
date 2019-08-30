@@ -138,8 +138,8 @@
     status_code: 200
   register: preferences
 
-  debug:
-    - var: preferences
+- debug:
+    var: preferences
 
 
 - name: Star dashboard
