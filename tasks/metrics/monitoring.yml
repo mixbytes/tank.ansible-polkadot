@@ -125,6 +125,23 @@
     - not imported
     - not dashboard_exist.stat.exists
 
+- name: Get user preferences to check, whether dashboard is starred or not
+  uri:
+    url: "http://127.0.0.1:3000/api/user/preferences"
+    method: GET
+    user: "{{ admin_user }}"
+    password: "{{ admin_password }}"
+    force_basic_auth: true
+    headers:
+      Content-Type: "application/json"
+      Accepts: "application/json"
+    status_code: 200
+  register: preferences
+
+  debug:
+    - var: preferences
+
+
 - name: Star dashboard
   uri:
     url: "http://127.0.0.1:3000/api/user/stars/dashboard/1"
