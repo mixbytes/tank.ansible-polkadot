@@ -139,7 +139,7 @@
   register: preferences
 
 - debug:
-    var: preferences
+    var: preferences.json.homeDashboardId
 
 
 - name: Star dashboard
