@@ -2,7 +2,7 @@
 - name: Import datasource for grafana
   grafana_datasource:
     name: "monitoring"
-    grafana_url: "http://localhost:3000"
+    grafana_url: "http://localhost:{{ grafana_http_port }}"
     grafana_user: "{{ admin_user }}"
     grafana_password: "{{ admin_password }}"
     org_id: "1"
