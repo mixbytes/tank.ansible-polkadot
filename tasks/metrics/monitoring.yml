@@ -138,29 +138,29 @@
     status_code: 200
   register: preferences
 
-- name: Star dashboard
-  uri:
-    url: "http://127.0.0.1:3000/api/user/stars/dashboard/1"
-    method: POST
-    user: "{{ admin_user }}"
-    password: "{{ admin_password }}"
-    force_basic_auth: true
-    status_code: 200
-  when:
-    - preferences.json.homeDashboardId == 0
+- name: Star and set default dashboard
+  block:
+    - name: Star dashboard
+      uri:
+        url: "http://127.0.0.1:3000/api/user/stars/dashboard/1"
+        method: POST
+        user: "{{ admin_user }}"
+        password: "{{ admin_password }}"
+        force_basic_auth: true
+        status_code: 200
 
-- name: Set default dashboard
-  uri:
-    url: "http://127.0.0.1:3000/api/user/preferences"
-    method: PUT
-    user: "{{ admin_user }}"
-    password: "{{ admin_password }}"
-    force_basic_auth: true
-    body: {"theme": "", "homeDashboardId": 1, "timezone": ""}
-    body_format: json
-    status_code: 200
-    headers:
-      Content-Type: "application/json"
-      Accepts: "application/json"
+    - name: Set default dashboard
+      uri:
+        url: "http://127.0.0.1:3000/api/user/preferences"
+        method: PUT
+        user: "{{ admin_user }}"
+        password: "{{ admin_password }}"
+        force_basic_auth: true
+        body: {"theme": "", "homeDashboardId": 1, "timezone": ""}
+        body_format: json
+        status_code: 200
+        headers:
+          Content-Type: "application/json"
+          Accepts: "application/json"
   when:
     - preferences.json.homeDashboardId == 0
