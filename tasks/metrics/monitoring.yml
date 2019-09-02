@@ -26,7 +26,7 @@
 
 - name: Check api status and retry until is available
   uri:
-    url: "http://127.0.0.1:3000/api/admin/settings"
+    url: "http://127.0.0.1:{{ grafana_http_port }}/api/admin/settings"
     method: GET
     user: "{{ admin_user }}"
     password: "{{ admin_password }}"
@@ -62,7 +62,7 @@
 
 - name: Check dashboard exist by slug
   uri:
-    url: "http://127.0.0.1:3000/api/dashboards/slug/{{ dashboard_slug }}"
+    url: "http://127.0.0.1:{{ grafana_http_port }}/api/dashboards/slug/{{ dashboard_slug }}"
     method: GET
     user: "{{ admin_user }}"
     password: "{{ admin_password }}"
@@ -83,7 +83,7 @@
     - name: "Create dashboard"
       become: false
       grafana_dashboard:
-        grafana_url: "http://localhost:3000"
+        grafana_url: "http://localhost:{{ grafana_http_port }}"
         grafana_user: "{{ admin_user }}"
         grafana_password: "{{ admin_password }}"
         state: present
@@ -103,7 +103,7 @@
   block:
     - name: Delete existing dashboard
       grafana_dashboard:
-        grafana_url: "http://localhost:3000"
+        grafana_url: "http://localhost:{{ grafana_http_port }}"
         grafana_user: "{{ admin_user }}"
         grafana_password: "{{ admin_password }}"
         state: absent
@@ -112,7 +112,7 @@
 
     - name: Import new Grafana dashboard
       grafana_dashboard:
-        grafana_url: "http://localhost:3000"
+        grafana_url: "http://localhost:{{ grafana_http_port }}"
         grafana_user: "{{ admin_user }}"
         grafana_password: "{{ admin_password }}"
         state: present
@@ -125,25 +125,42 @@
     - not imported
     - not dashboard_exist.stat.exists
 
-- name: Star dashboard
+- name: Get user preferences to check, whether dashboard is starred or not
   uri:
-    url: "http://127.0.0.1:3000/api/user/stars/dashboard/1"
-    method: POST
+    url: "http://127.0.0.1:{{ grafana_http_port }}/api/user/preferences"
+    method: GET
     user: "{{ admin_user }}"
     password: "{{ admin_password }}"
     force_basic_auth: true
-    status_code: 200
-
-- name: Set default dashboard
-  uri:
-    url: "http://127.0.0.1:3000/api/user/preferences"
-    method: PUT
-    user: "{{ admin_user }}"
-    password: "{{ admin_password }}"
-    force_basic_auth: true
-    body: {"theme": "", "homeDashboardId": 1, "timezone": ""}
-    body_format: json
-    status_code: 200
     headers:
       Content-Type: "application/json"
       Accepts: "application/json"
+    status_code: 200
+  register: preferences
+
+- name: Star and set default dashboard
+  block:
+    - name: Star dashboard
+      uri:
+        url: "http://127.0.0.1:{{ grafana_http_port }}/api/user/stars/dashboard/1"
+        method: POST
+        user: "{{ admin_user }}"
+        password: "{{ admin_password }}"
+        force_basic_auth: true
+        status_code: 200
+
+    - name: Set default dashboard
+      uri:
+        url: "http://127.0.0.1:{{ grafana_http_port }}/api/user/preferences"
+        method: PUT
+        user: "{{ admin_user }}"
+        password: "{{ admin_password }}"
+        force_basic_auth: true
+        body: {"theme": "", "homeDashboardId": 1, "timezone": ""}
+        body_format: json
+        status_code: 200
+        headers:
+          Content-Type: "application/json"
+          Accepts: "application/json"
+  when:
+    - preferences.json.homeDashboardId == 0
