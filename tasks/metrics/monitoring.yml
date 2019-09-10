@@ -62,7 +62,7 @@
 
 - name: Check dashboard exist by slug
   uri:
-    url: "http://127.0.0.1:{{ grafana_http_port }}/api/dashboards/slug/{{ dashboard_slug }}"
+    url: "http://127.0.0.1:{{ grafana_http_port }}/api/dashboards/db/{{ dashboard_slug }}"
     method: GET
     user: "{{ admin_user }}"
     password: "{{ admin_password }}"
