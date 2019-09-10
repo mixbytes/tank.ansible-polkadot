@@ -8,3 +8,4 @@
     org_id: "1"
     ds_type: "prometheus"
     url: "http://172.17.0.1:9090"
+  changed_when: false

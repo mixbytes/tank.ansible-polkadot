@@ -41,24 +41,11 @@
   shell: |
     echo "{{ Title }}" | sed -e "s/ /-/g" | tr '[:upper:]' '[:lower:]'
   register: slugout
+  changed_when: "'polkadot-benchmark-dashboard' not in slugout.stdout"
 
 - name: Set slug
   set_fact:
     dashboard_slug: "{{ slugout.stdout }}"
-
-- name: Check dashboard exist by file
-  stat:
-    path: "{{ grafana_dashboard_tmp_file }}"
-  register: dashboard_exist
-
-- name: Generate UID
-  set_fact:
-    UID: "{{ lookup('password', '/dev/null length=9 chars=ascii_letters') }}"
-
-- name: Get dashboard uid
-  shell: |
-    cat "{{ grafana_dashboard_tmp_file }}" | grep uid | sed -e s/uid//g | tr -d ', ":'
-  register: uid_from_file
 
 - name: Check dashboard exist by slug
   uri:
@@ -70,6 +57,15 @@
     status_code: [200, 404, 400]
   register: slughttpresponse
 
+- name: Check dashboard exist by file
+  stat:
+    path: "{{ grafana_dashboard_tmp_file }}"
+  register: dashboard_exist
+
+- name: Generate UID
+  set_fact:
+    UID: "{{ lookup('password', '/dev/null length=9 chars=ascii_letters') }}"
+
 - name: Copy dashboard
   become: false
   template:
@@ -77,6 +73,12 @@
     dest: "{{ grafana_dashboard_tmp_file }}"
   register: dashboard
   when: slughttpresponse.status == 404
+
+- name: Get dashboard uid
+  shell: |
+    cat "{{ grafana_dashboard_tmp_file }}" | grep uid | sed -e s/uid//g | tr -d ', ":'
+  register: uid_from_file
+  when: dashboard.changed
 
 - name: Import Grafana dashboard (if not imported)
   block:
