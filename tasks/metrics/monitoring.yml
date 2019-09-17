@@ -78,7 +78,7 @@
   shell: |
     cat "{{ grafana_dashboard_tmp_file }}" | grep uid | sed -e s/uid//g | tr -d ', ":'
   register: uid_from_file
-  when: dashboard.changed # noqa 503
+  when: dashboard.changed  # noqa 503
 
 - name: Import Grafana dashboard (if not imported)
   block:
