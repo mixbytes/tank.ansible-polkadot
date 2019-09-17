@@ -6,3 +6,4 @@ notes
 *.sublime-project
 *.sublime-workspace
 env
+venv
