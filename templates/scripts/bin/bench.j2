@@ -28,7 +28,7 @@ check_cmd_in_path docker
 exec docker run \
   --interactive --rm --network=host \
   --volume "{{ bc_path_general }}/bench/config/bench.config.json"/:/tool/bench.config.json \
-  --volume "{{ bc_path_general }}/bench/config/polkadot.bench.config.json":/tool/polkadot.bench.config.json \   # backward compat
+  --volume "{{ bc_path_general }}/bench/config/polkadot.bench.config.json":/tool/polkadot.bench.config.json \
   --volume "{{ bc_path_general }}/bench/config/polkadot.bench.config.json":/tool/blockchain.bench.config.json \
   --volume "{{ load_profile_remote_file }}:{{ load_profile_file_in_container }}" \
   --workdir /tool \
