@@ -11,6 +11,12 @@
     - "{{ bc_path_state }}"
 
 
+- name: "Load keys file"
+  template:
+    src: "nodekeys/keys.txt.j2"
+    dest: "{{ bc_path_general }}/nodekeys/keys.txt"
+
+
 - name: "Start {{ bc_name }}-{{ bc_component_name }} container"
   register: "{{ bc_name }}_{{ bc_component_name }}"
   docker_container:
@@ -18,7 +24,7 @@
     image: "{{ bc_polkadot_image }}"
     command: |
       /usr/local/bin/polkadot -d /state
-      --chain=bench --validator --key "//v{{ bc_polkadot_extra_validator_id }}" --ws-external --rpc-external
+      --chain=bench --validator --ws-external --rpc-external
       --bootnodes "/ip4/{{ bc_boot_ip[0] }}/tcp/30333/p2p/QmXS53cQyDRT7RaXiKYLjfkX8xSc9pBDPohDh1F3HxzjAz"
     hostname: "{{ bc_name }}-{{ bc_component_name }}"
     network_mode: host
@@ -30,6 +36,84 @@
     env:
       EXTRA_VALIDATORS: "{{ bc_peers_ip|length - 1 }}"
 
+- name: "Check health producer"
+  uri:
+    url: "http://localhost:9933"
+    method: POST
+    body: '{"jsonrpc":"2.0", "method":"rpc_methods", "params": []}'
+    body_format: json
+    status_code: 200
+  register: check_producer
+  retries: 10
+  delay: 5
+  until: check_producer is success
+  tags:
+    - prod
+
+- name: "Get producer grandpa key"
+  shell: |
+    sed -n $(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 2),$(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 3)p\
+     {{ bc_path_general }}/nodekeys/keys.txt | tr '\n' ' '| awk '{ printf "gran, %s, %s", $1, $2 }'
+  register: producer_grandpa_key
+
+- name: "Get producer babe key"
+  shell: |
+    sed -n $(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 4),$(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 5)p\
+     {{ bc_path_general }}/nodekeys/keys.txt | tr '\n' ' '| awk '{ printf "babe, %s, %s", $1, $2 }'
+  register: producer_babe_key
+
+- name: "Get producer imonline key"
+  shell: |
+    sed -n $(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 6),$(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 7)p\
+     {{ bc_path_general }}/nodekeys/keys.txt | tr '\n' ' '| awk '{ printf "imon, %s, %s", $1, $2 }'
+  register: producer_imonline_key
+
+- name: "Set producer grandpa key"
+  uri:
+    url: "http://localhost:9933"
+    method: POST
+    body: '{"jsonrpc":"2.0", "method":"author_insertKey", "params": ["{{ producer_grandpa_key }}"], "id":1}'
+    body_format: json
+    status_code: 200
+  tags:
+    - prod
+
+- name: "Set producer babe key"
+  uri:
+    url: "http://localhost:9933"
+    method: POST
+    body: '{"jsonrpc":"2.0", "method":"author_insertKey", "params": ["{{ producer_babe_key }}"], "id":2}'
+    body_format: json
+    status_code: 200
+  tags:
+    - prod
+
+- name: "Set producer imonline key"
+  uri:
+    url: "http://localhost:9933"
+    method: POST
+    body: '{"jsonrpc":"2.0", "method":"author_insertKey", "params": ["{{ producer_imonline_key }}"], "id":3}'
+    body_format: json
+    status_code: 200
+  tags:
+    - prod
+
+- name: "Restart the node to apply keys"
+  shell: docker restart "{{ bc_name }}-{{ bc_component_name }}"
+
+- name: "Check health producer after restart"
+  uri:
+    url: "http://localhost:9933"
+    method: POST
+    body: '{"jsonrpc":"2.0", "method":"rpc_methods", "params": []}'
+    body_format: json
+    status_code: 200
+  register: check_producer_after_reboot
+  retries: 10
+  delay: 5
+  until: check_producer_after_reboot is success
+  tags:
+    - prod
 
 - name: "Start {{ bc_name }}-{{ bc_component_name }}-metrics container"
   docker_container:
@@ -48,3 +132,4 @@
   tags:
     - never
     - debug
+

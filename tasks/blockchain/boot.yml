@@ -16,7 +16,7 @@
     image: "{{ bc_polkadot_image }}"
     command: |
       /usr/local/bin/polkadot -d /state
-      --chain=bench --validator --key //Alice --ws-external --rpc-external
+      --chain=bench --validator --alice --ws-external --rpc-external
       --node-key-type ed25519 --node-key 1111111111111111111111111111111111111111111111111111111111111111
     hostname: "{{ bc_name }}-{{ bc_component_name }}"
     network_mode: host
