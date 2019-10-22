@@ -12,12 +12,16 @@
 
 
 - name: "Load keys file"
+  tags:
+    - prod
   template:
     src: "nodekeys/keys.txt.j2"
-    dest: "{{ bc_path_general }}/nodekeys/keys.txt"
+    dest: "{{ bc_path_general }}/keys.txt"
 
 
 - name: "Start {{ bc_name }}-{{ bc_component_name }} container"
+  tags:
+    - prod
   register: "{{ bc_name }}_{{ bc_component_name }}"
   docker_container:
     name: "{{ bc_name }}-{{ bc_component_name }}"
@@ -51,21 +55,27 @@
     - prod
 
 - name: "Get producer grandpa key"
+  tags:
+    - prod
   shell: |
     sed -n $(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 2),$(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 3)p\
-     {{ bc_path_general }}/nodekeys/keys.txt | tr '\n' ' '| awk '{ printf "gran, %s, %s", $1, $2 }'
+     {{ bc_path_general }}/keys.txt | tr '\n' ' '| awk '{ printf "gran, %s, %s", $1, $2 }'
   register: producer_grandpa_key
 
 - name: "Get producer babe key"
+  tags:
+    - prod
   shell: |
     sed -n $(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 4),$(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 5)p\
-     {{ bc_path_general }}/nodekeys/keys.txt | tr '\n' ' '| awk '{ printf "babe, %s, %s", $1, $2 }'
+     {{ bc_path_general }}/keys.txt | tr '\n' ' '| awk '{ printf "babe, %s, %s", $1, $2 }'
   register: producer_babe_key
 
 - name: "Get producer imonline key"
+  tags:
+    - prod
   shell: |
     sed -n $(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 6),$(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 7)p\
-     {{ bc_path_general }}/nodekeys/keys.txt | tr '\n' ' '| awk '{ printf "imon, %s, %s", $1, $2 }'
+     {{ bc_path_general }}/keys.txt | tr '\n' ' '| awk '{ printf "imon, %s, %s", $1, $2 }'
   register: producer_imonline_key
 
 - name: "Set producer grandpa key"
@@ -99,6 +109,8 @@
     - prod
 
 - name: "Restart the node to apply keys"
+  tags:
+    - prod
   shell: docker restart "{{ bc_name }}-{{ bc_component_name }}"
 
 - name: "Check health producer after restart"
