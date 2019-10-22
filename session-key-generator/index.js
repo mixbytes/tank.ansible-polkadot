@@ -2,6 +2,7 @@
 // Credit - https://github.com/w3f/polkadot-deployer/blob/master/lib/network/crypto.js
 
 const fs = require("fs");
+const util = require('util');
 
 const Keyring = require('@polkadot/keyring').default;
 const {mnemonicToSeed} = require('@polkadot/util-crypto');
@@ -78,25 +79,20 @@ let seeds = new Array(seedsCount)
 module.exports
     .create(seeds)
     .then(keys => {
-        return Object.keys(keys).map(mnemonic => {
-            return mnemonic.toString() + "\n" +
-                keys[mnemonic].session_grandpa.seed + "\n" +
-                keys[mnemonic].session_grandpa.publicKey + "\n" +
-                keys[mnemonic].session_babe.seed + "\n" +
-                keys[mnemonic].session_babe.publicKey + "\n" +
-                keys[mnemonic].session_imonline.seed + "\n" +
-                keys[mnemonic].session_imonline.publicKey + "\n"
+        return Object.keys(keys).map((mnemonic, index) => {
+            const grandpa = keys[mnemonic].session_grandpa;
+            const babe = keys[mnemonic].session_babe;
+            const imonline = keys[mnemonic].session_imonline;
+
+            let keysFileData = "" +
+                util.format('"gran", "%s", "%s"\n', grandpa.seed, grandpa.publicKey) +
+                util.format('"babe", "%s", "%s"\n', babe.seed, babe.publicKey) +
+                util.format('"imon", "%s", "%s"', imonline.seed, imonline.publicKey);
+
+            fs.writeFileSync(
+                "../templates/nodekeys/" + index + ".txt.j2",
+                keysFileData
+            );
         })
-    })
-    .then(data => {
-        let result = "";
-        data.forEach(keys => {
-            result += keys
-        });
-        return result;
-    })
-    .then(result => {
-        fs.writeFileSync("../templates/nodekeys/keys.txt.j2", result);
-        console.log(result)
     });
 

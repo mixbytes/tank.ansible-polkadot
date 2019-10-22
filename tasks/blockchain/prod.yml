@@ -10,19 +10,9 @@
     - "{{ bc_path_config }}"
     - "{{ bc_path_state }}"
 
-
-- name: "Load keys file"
-  tags:
-    - prod
-  template:
-    src: "nodekeys/keys.txt.j2"
-    dest: "{{ bc_path_general }}/keys.txt"
-
-
 - name: "Start {{ bc_name }}-{{ bc_component_name }} container"
   tags:
     - prod
-  register: "{{ bc_name }}_{{ bc_component_name }}"
   docker_container:
     name: "{{ bc_name }}-{{ bc_component_name }}"
     image: "{{ bc_polkadot_image }}"
@@ -54,57 +44,15 @@
   tags:
     - prod
 
-- name: "Get producer grandpa key"
-  tags:
-    - prod
-  shell: |
-    sed -n $(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 2),$(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 3)p\
-     {{ bc_path_general }}/keys.txt | tr '\n' ' '| awk '{ printf "gran, %s, %s", $1, $2 }'
-  register: producer_grandpa_key
-
-- name: "Get producer babe key"
-  tags:
-    - prod
-  shell: |
-    sed -n $(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 4),$(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 5)p\
-     {{ bc_path_general }}/keys.txt | tr '\n' ' '| awk '{ printf "babe, %s, %s", $1, $2 }'
-  register: producer_babe_key
-
-- name: "Get producer imonline key"
-  tags:
-    - prod
-  shell: |
-    sed -n $(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 6),$(expr {{ bc_polkadot_extra_validator_id }} \* 7 + 7)p\
-     {{ bc_path_general }}/keys.txt | tr '\n' ' '| awk '{ printf "imon, %s, %s", $1, $2 }'
-  register: producer_imonline_key
-
-- name: "Set producer grandpa key"
+- name: "Set producer keys"
   uri:
     url: "http://localhost:9933"
     method: POST
-    body: '{"jsonrpc":"2.0", "method":"author_insertKey", "params": ["{{ producer_grandpa_key }}"], "id":1}'
+    body: '{"jsonrpc":"2.0", "method":"author_insertKey", "params": ["{{ item }}"], "id":1}'
     body_format: json
     status_code: 200
-  tags:
-    - prod
-
-- name: "Set producer babe key"
-  uri:
-    url: "http://localhost:9933"
-    method: POST
-    body: '{"jsonrpc":"2.0", "method":"author_insertKey", "params": ["{{ producer_babe_key }}"], "id":2}'
-    body_format: json
-    status_code: 200
-  tags:
-    - prod
-
-- name: "Set producer imonline key"
-  uri:
-    url: "http://localhost:9933"
-    method: POST
-    body: '{"jsonrpc":"2.0", "method":"author_insertKey", "params": ["{{ producer_imonline_key }}"], "id":3}'
-    body_format: json
-    status_code: 200
+  with_items:
+    "{{ lookup('template', 'nodekeys/{{ bc_polkadot_extra_validator_id }}.txt.j2').splitlines() }}"
   tags:
     - prod
 
