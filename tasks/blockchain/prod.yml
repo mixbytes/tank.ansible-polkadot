@@ -56,10 +56,30 @@
   tags:
     - prod
 
-- name: "Restart the node to apply keys"
+- name: "Stop the node to restart the container with the same command"
   tags:
     - prod
-  shell: docker restart "{{ bc_name }}-{{ bc_component_name }}"
+  shell: docker rm -f "{{ bc_name }}-{{ bc_component_name }}"
+
+- name: "Start again {{ bc_name }}-{{ bc_component_name }} container"
+  tags:
+    - prod
+  docker_container:
+    name: "{{ bc_name }}-{{ bc_component_name }}"
+    image: "{{ bc_polkadot_image }}"
+    command: |
+      /usr/local/bin/polkadot -d /state
+      --chain=bench --validator --ws-external --rpc-external
+      --bootnodes "/ip4/{{ bc_boot_ip[0] }}/tcp/30333/p2p/QmXS53cQyDRT7RaXiKYLjfkX8xSc9pBDPohDh1F3HxzjAz"
+    hostname: "{{ bc_name }}-{{ bc_component_name }}"
+    network_mode: host
+    volumes:
+      - "{{ bc_path_state }}:/state"
+      - "/tmp/cores:/tmp/cores"
+    stop_timeout: 600
+    pull: true
+    env:
+      EXTRA_VALIDATORS: "{{ bc_peers_ip|length - 1 }}"
 
 - name: "Check health producer after restart"
   uri:
