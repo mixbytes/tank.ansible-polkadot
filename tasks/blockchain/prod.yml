@@ -45,6 +45,8 @@
     - prod
 
 - name: "Set producer keys"
+  debug:
+    msg: "{{ bc_name }}-{{ bc_component_name }}. Applying keys: {{ item }}"
   uri:
     url: "http://localhost:9933"
     method: POST
