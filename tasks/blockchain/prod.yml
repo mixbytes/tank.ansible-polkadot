@@ -39,7 +39,7 @@
     body_format: json
     status_code: 200
   register: check_producer
-  retries: 10
+  retries: 15
   delay: 10
   until: check_producer is success
   tags:

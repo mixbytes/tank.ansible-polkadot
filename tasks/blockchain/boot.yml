@@ -48,6 +48,12 @@
     body_format: json
     status_code: 200
   register: check_boot
-  retries: 10
+  retries: 15
   delay: 10
   until: check_boot is success
+
+- name: "Waiting"
+  pause:
+    seconds: 15
+  when:
+    - _start_boot_node is changed
