@@ -11,6 +11,7 @@
     - "{{ bc_path_state }}"
 
 - name: "Start {{ bc_name }}-{{ bc_component_name }} container"
+  become: true
   tags:
     - prod
   docker_container:
