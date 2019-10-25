@@ -4,6 +4,7 @@
   file:
     path: "{{ item }}"
     state: directory
+    mode: 0777
   with_items:
     - "{{ bc_path_config }}"
     - "{{ bc_path_state }}"
@@ -16,7 +17,7 @@
     image: "{{ bc_polkadot_image }}"
     command: |
       /usr/local/bin/polkadot -d /state
-      --chain=bench --validator --alice --ws-external --rpc-external
+      --chain=bench --validator --alice --ws-external --rpc-external --rpc-cors=all
       --node-key-type ed25519 --node-key 1111111111111111111111111111111111111111111111111111111111111111
     hostname: "{{ bc_name }}-{{ bc_component_name }}"
     network_mode: host
@@ -39,9 +40,14 @@
     stop_timeout: 600
     pull: true
 
-
-- name: "Waiting"
-  pause:
-    seconds: 15
-  when:
-    - _start_boot_node is changed
+- name: "Check health boot"
+  uri:
+    url: "http://localhost:9933"
+    method: POST
+    body: '{"jsonrpc":"2.0", "method":"system_health", "params": [], "id":1}'
+    body_format: json
+    status_code: 200
+  register: check_boot
+  retries: 10
+  delay: 10
+  until: check_boot is success
