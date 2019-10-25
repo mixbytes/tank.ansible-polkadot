@@ -6,7 +6,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: 0777
+    owner: 1000
   with_items:
     - "{{ bc_path_config }}"
     - "{{ bc_path_state }}"
