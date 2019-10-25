@@ -34,7 +34,7 @@
   uri:
     url: "http://localhost:9933"
     method: POST
-    body: '{"jsonrpc":"2.0", "method":"system_health", "params": []}'
+    body: '{"jsonrpc":"2.0", "method":"system_health", "params": [], "id":1}'
     body_format: json
     status_code: 200
   register: check_producer
