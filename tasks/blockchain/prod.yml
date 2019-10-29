@@ -25,7 +25,6 @@
     network_mode: host
     volumes:
       - "{{ bc_path_state }}:/state"
-      - "/tmp/cores:/tmp/cores"
     stop_timeout: 600
     pull: true
     env:
@@ -60,7 +59,7 @@
 - name: "Stop the node to restart the container with the same command"
   tags:
     - prod
-  shell: docker restart "{{ bc_name }}-{{ bc_component_name }}"
+  shell: docker restart {{ bc_name }}-{{ bc_component_name }}
 
 - name: "Check health producer after restart"
   uri:

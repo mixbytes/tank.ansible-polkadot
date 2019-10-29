@@ -10,16 +10,6 @@
     - "{{ bc_path_state }}"
 
 
-- name: "Make directory structure"
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: 0777
-  with_items:
-    - "{{ bc_path_config }}"
-    - "{{ bc_path_state }}"
-
-
 - name: Start boot-node container
   register: _start_boot_node
   docker_container:
@@ -33,7 +23,6 @@
     network_mode: host
     volumes:
       - "{{ bc_path_state }}:/state"
-      - "/tmp/cores:/tmp/cores"
     stop_timeout: 600
     pull: true
     env:
