@@ -27,8 +27,6 @@
       - "{{ bc_path_state }}:/state"
     stop_timeout: 600
     pull: true
-    env:
-      EXTRA_VALIDATORS: "{{ bc_peers_ip|length - 1 }}"
 
 - name: "Check health producer"
   uri:
