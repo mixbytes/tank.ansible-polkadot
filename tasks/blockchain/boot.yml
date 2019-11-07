@@ -23,6 +23,9 @@
     network_mode: host
     volumes:
       - "{{ bc_path_state }}:/state"
+    env:
+      EXTRA_VALIDATORS: {{ bc_polkadot_validators_count }}
+      EXTRA_ENDOWED: {{ bc_polkadot_extra_endowed }}
     stop_timeout: 600
     pull: true
 

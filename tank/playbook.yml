@@ -6,6 +6,7 @@
   vars:
     bc_polkadot_comp_state_boot: present
     install_promstack: true
+    bc_polkadot_validators_count: "{{ *prod* | length }}"
   roles:
     - role: tank.blockchain
   tasks:
@@ -23,6 +24,7 @@
     bc_polkadot_extra_validator_id: "{{ play_hosts.index(inventory_hostname) | int }}"
     bc_polkadot_bench_shard_id: "{{ play_hosts.index(inventory_hostname) | int }}"
     bc_polkadot_bench_shards: "{{ play_hosts | length }}"
+    bc_polkadot_validators_count: "{{ play_hosts | length }}"
   roles:
     - role: tank.blockchain
   tasks:

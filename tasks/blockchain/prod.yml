@@ -25,6 +25,9 @@
     network_mode: host
     volumes:
       - "{{ bc_path_state }}:/state"
+    env:
+      EXTRA_VALIDATORS: {{ bc_polkadot_validators_count }}
+      EXTRA_ENDOWED: {{ bc_polkadot_extra_endowed }}
     stop_timeout: 600
     pull: true
 
@@ -48,7 +51,7 @@
     method: POST
     body: '{"jsonrpc":"2.0", "method":"author_insertKey", "params": ["{{ item }}"], "id":1}'
     body_format: json
-    status_code: 200
+    status_code: 200`
   with_items:
     "{{ lookup('template', 'nodekeys/{{ bc_polkadot_extra_validator_id }}.txt.j2').splitlines() }}"
   tags:
@@ -63,7 +66,7 @@
   uri:
     url: "http://localhost:9933"
     method: POST
-    body: '{"jsonrpc":"2.0", "method":"rpc_methods", "params": []}'
+    body: '{"jsonrpc":"2.0", "method":"system_health", "params": []}'
     body_format: json
     status_code: 200
   register: check_producer_after_reboot
