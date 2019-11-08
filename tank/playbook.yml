@@ -1,22 +1,11 @@
 ---
-- name: Add producers to group producers
-  tags:
-    - always
-  add_host:
-    name: "{{ item }}"
-    groups: producers
-    inventory_dir: "{{ hostvars[item].inventory_dir }}"
-  loop: "{{ groups['all'] }}"
-  when: '"prod" in hostvars[item]["ansible_hostname"]'
-  changed_when: false
-
 - name: Converge boot node
   hosts: "*boot*"
   become: true
   gather_facts: smart
   vars:
     bc_polkadot_comp_state_boot: present
-    bc_producers_count: "{{ group['producers'] | length }}"
+    bc_producers_count: "{{ (group['bcboot'] | length) - (groups['all'] | length) }}"
     install_promstack: true
   roles:
     - role: tank.blockchain
@@ -35,7 +24,7 @@
     bc_polkadot_extra_validator_id: "{{ play_hosts.index(inventory_hostname) | int }}"
     bc_polkadot_bench_shard_id: "{{ play_hosts.index(inventory_hostname) | int }}"
     bc_polkadot_bench_shards: "{{ play_hosts | length }}"
-    bc_producers_count: "{{ group['producers'] | length }}"
+    bc_producers_count: "{{ (group['bcboot'] | length) - (groups['all'] | length) }}"
   roles:
     - role: tank.blockchain
   tasks:
