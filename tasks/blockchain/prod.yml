@@ -26,7 +26,7 @@
     volumes:
       - "{{ bc_path_state }}:/state"
     env:
-      EXTRA_VALIDATORS: "{{ (group['bcboot'] | length) - (groups['all'] | length) }}"
+      EXTRA_VALIDATORS: "{{ (groups['bcboot'] | length) - (groups['all'] | length) }}"
       EXTRA_ENDOWED: "{{ bc_polkadot_extra_endowed }}"
     stop_timeout: 600
     pull: true
