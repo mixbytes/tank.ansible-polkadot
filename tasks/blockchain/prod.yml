@@ -26,7 +26,7 @@
     volumes:
       - "{{ bc_path_state }}:/state"
     env:
-      EXTRA_VALIDATORS: "{{ bc_producers_count }}"
+      EXTRA_VALIDATORS: "{{ (group['bcboot'] | length) - (groups['all'] | length) }}"
       EXTRA_ENDOWED: "{{ bc_polkadot_extra_endowed }}"
     stop_timeout: 600
     pull: true
@@ -51,7 +51,7 @@
     method: POST
     body: '{"jsonrpc":"2.0", "method":"author_insertKey", "params": ["{{ item }}"], "id":1}'
     body_format: json
-    status_code: 200`
+    status_code: 200
   with_items:
     "{{ lookup('template', 'nodekeys/{{ bc_polkadot_extra_validator_id }}.txt.j2').splitlines() }}"
   tags:

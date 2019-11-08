@@ -5,7 +5,6 @@
   gather_facts: smart
   vars:
     bc_polkadot_comp_state_boot: present
-    bc_producers_count: "{{ (play_hosts | length) - 1 }}"
     install_promstack: true
   roles:
     - role: tank.blockchain
@@ -24,7 +23,6 @@
     bc_polkadot_extra_validator_id: "{{ play_hosts.index(inventory_hostname) | int }}"
     bc_polkadot_bench_shard_id: "{{ play_hosts.index(inventory_hostname) | int }}"
     bc_polkadot_bench_shards: "{{ play_hosts | length }}"
-    bc_producers_count: "{{ (play_hosts | length) - 1 }}"
   roles:
     - role: tank.blockchain
   tasks:
