@@ -49,7 +49,7 @@
   uri:
     url: "http://localhost:9933"
     method: POST
-    body: '{"jsonrpc":"2.0", "method":"author_insertKey", "params": ["{{ item }}"], "id":1}'
+    body: '{"jsonrpc":"2.0", "method":"author_insertKey", "params": [{{ item }}], "id":1}'
     body_format: json
     status_code: 200
   with_items:
