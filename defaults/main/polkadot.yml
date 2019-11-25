@@ -6,7 +6,9 @@ bc_polkadot_comp_state_prod: absent
 bc_polkadot_comp_state_monitoring: absent
 bc_polkadot_comp_state_bench: absent
 
-bc_polkadot_image: "mixbytes/polkadot:eenae-bench-0.4"
+bc_polkadot_image: "mixbytes/polkadot:bench-0.6.2.2"
 bc_polkadot_exporter_image: "mixbytes/polkadot-prometheus-exporter"
+
+bc_polkadot_extra_endowed: "1001"
 
 bc_polkadot_node_metrics_port: 8889
