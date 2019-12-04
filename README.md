@@ -10,6 +10,10 @@ Tank Binding API
 
 `bench_present` fact must be set to `True` on all nodes which are capable of running the bench util. 
 
+The bench tool, if installed, must be installed at the `/tool` directory, and must have the following configs:
+* `/tool/bench.config.json` (common bench tool config)
+* `/tool/blockchain.bench.config.json` (blockchain-specific bench tool config)
+
 Role Name
 =========
 
