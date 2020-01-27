@@ -6,7 +6,7 @@ bc_polkadot_comp_state_prod: absent
 bc_polkadot_comp_state_monitoring: absent
 bc_polkadot_comp_state_bench: absent
 
-bc_polkadot_image: "scaptaincap/polkadot:0.6.18"
+bc_polkadot_image: "scaptaincap/polkadot:0.7.18"
 bc_polkadot_exporter_image: "mixbytes/polkadot-prometheus-exporter"
 
 bc_polkadot_extra_endowed: "1001"
