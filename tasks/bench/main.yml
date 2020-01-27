@@ -27,4 +27,4 @@
 
 - name: "Pull docker container"
   docker_image:
-    name: mixbytes/tank.bench-polkadot
+    name: scaptaincap/tank.bench-common:latest
