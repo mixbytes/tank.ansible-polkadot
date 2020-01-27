@@ -19,7 +19,7 @@
     image: "{{ bc_polkadot_image }}"
     command: |
       /usr/local/bin/polkadot -d /state
-      --chain=bench --validator --ws-external --rpc-external --rpc-cors=all
+      --chain=bench --validator --unsafe-ws-external --unsafe-rpc-external --rpc-cors=all
       --bootnodes "/ip4/{{ bc_boot_ip[0] }}/tcp/30333/p2p/QmXS53cQyDRT7RaXiKYLjfkX8xSc9pBDPohDh1F3HxzjAz"
     hostname: "{{ bc_name }}-{{ bc_component_name }}"
     network_mode: host
