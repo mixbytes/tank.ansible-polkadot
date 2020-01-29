@@ -27,7 +27,7 @@ check_cmd_in_path docker
 # Set up mounted volumes, environment, and run our containerized command
 exec docker run \
   --interactive --rm --network=host \
-  --volume "{{ bc_path_general }}/bench/config/bench.config.json"/:/bench.config.json \
-  --volume "{{ bc_path_general }}/bench/config/polkadot.bench.config.json":/module.config.json \
+  --volume "{{ bc_path_general }}/bench/config/bench.config.json"/:/tool/bench.config.json \
+  --volume "{{ bc_path_general }}/bench/config/polkadot.bench.config.json":/tool/blockchain.bench.config.json \
   --volume "{{ load_profile_remote_file }}:{{ load_profile_file_in_container }}" \
   "scaptaincap/tank.bench-common:latest" "-case={{ load_profile_file_in_container }}" "$@"
