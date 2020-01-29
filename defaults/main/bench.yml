@@ -19,3 +19,7 @@ bench_config_polkadot:
 
 load_profile_remote_file: "{{ bc_path_general }}/bench/load_profile.js"
 load_profile_file_in_container: "/tool/load_profile.js"
+
+bc_path_general: "/opt"
+bc_path_config: "{{ bc_path_general }}/{{ bc_name }}/{{ bc_component_name }}/config"
+bc_path_state: "{{ bc_path_general }}/{{ bc_name }}/{{ bc_component_name }}/state"

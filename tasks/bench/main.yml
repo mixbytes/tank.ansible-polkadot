@@ -18,3 +18,13 @@
   template:
     src: "configs/bench/polkadot.bench.config.json.j2"
     dest: "{{ bc_path_general }}/bench/config/polkadot.bench.config.json"
+
+- name: "Install bench"
+  template:
+    src: scripts/bin/bench.j2
+    dest: /usr/bin/bench
+    mode: 0755
+
+- name: "Pull docker container"
+  docker_image:
+    name: scaptaincap/tank.bench-common:latest
