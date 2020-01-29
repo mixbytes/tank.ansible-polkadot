@@ -10,3 +10,17 @@
       copy:
         src: "{{ load_profile_local_file }}"
         dest: "{{ load_profile_remote_file }}"
+
+    - name: "Start bench container"
+      docker_container:
+        name: "bench"
+        image: "scaptaincap/tank.bench-common:latest"
+        command: |
+          {{ load_profile_file_in_container }}
+        volumes:
+          - "{{ bc_path_general }}/bench/config/bench.config.json:/bench.config.json"
+          - "{{ bc_path_general }}/bench/config/polkadot.bench.config.json:/module.config.json"
+          - "{{ load_profile_remote_file }}:{{ load_profile_file_in_container }}"
+        stop_timeout: 600
+        detach: no
+        pull: true
