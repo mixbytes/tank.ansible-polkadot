@@ -32,4 +32,4 @@ exec docker run \
   --volume "{{ bc_path_general }}/bench/config/polkadot.bench.config.json":/tool/blockchain.bench.config.json \
   --volume "{{ load_profile_remote_file }}:{{ load_profile_file_in_container }}" \
   --workdir /tool \
-  "mixbytes/tank.bench-polkadot" "-case={{ load_profile_file_in_container }}" "$@"
+  "scaptaincap/tank.bench-common:latest" "-case={{ load_profile_file_in_container }}" "$@"
