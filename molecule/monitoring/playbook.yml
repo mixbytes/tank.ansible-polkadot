@@ -85,7 +85,7 @@
   hosts: "*monitoring*"
   become: true
   vars:
-    bc_polkadot_comp_state_monitoring: present
+    bc_comp_state_monitoring: present
     install_promstack: true
     admin_user: tank
     admin_password: tank

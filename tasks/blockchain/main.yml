@@ -68,7 +68,7 @@
         - "targets"
 
   when:
-    - bc_polkadot_comp_state_monitoring == "present"
+    - bc_comp_state_monitoring == "present"
 
 
 # clear variable
