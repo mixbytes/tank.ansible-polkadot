@@ -3,7 +3,7 @@
 
 bc_polkadot_comp_state_boot: absent
 bc_polkadot_comp_state_prod: absent
-bc_polkadot_comp_state_monitoring: absent
+bc_comp_state_monitoring: absent
 bc_polkadot_comp_state_bench: absent
 
 bc_polkadot_image: "mixbytes/polkadot:eenae-bench-0.4"
